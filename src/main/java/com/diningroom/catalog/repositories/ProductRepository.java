@@ -1,0 +1,11 @@
+package com.diningroom.catalog.repositories;
+
+import com.diningroom.catalog.entitties.Brand;
+import com.diningroom.catalog.entitties.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    List<Product> findByBrand(Brand brad);
+}
