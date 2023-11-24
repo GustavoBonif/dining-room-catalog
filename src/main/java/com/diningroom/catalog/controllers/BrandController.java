@@ -45,11 +45,11 @@ public class BrandController {
     }
 
     @GetMapping(value = "/listAll")
-    public List<BrandDTO> createBrand() {
+    public List<BrandDTO> listAllBrand() {
         return service.findAll();
     }
 
-    @PatchMapping(value = "/update/{brandId}")
+    @PatchMapping(value = "/{brandId}")
     public ResponseEntity<String> updateBrand(@PathVariable Long brandId, @RequestBody BrandDTO brandDTO) {
         try {
             BrandDTO brandUpdatedDTO = service.updateBrand(brandId, brandDTO);
