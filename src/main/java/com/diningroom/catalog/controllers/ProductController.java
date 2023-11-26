@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -19,7 +20,7 @@ public class ProductController {
     private ProductService service;
 
     @GetMapping(value = "/{id}")
-    public ProductDTO findById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
@@ -66,5 +67,15 @@ public class ProductController {
     public ResponseEntity<List<ProductDTO>> listProductsByBrand(@PathVariable Long brandId) {
         List<ProductDTO> productsDTO = service.listProductsByBrand(brandId);
         return new ResponseEntity<>(productsDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/exists/{id}")
+    public ResponseEntity<Boolean> exists(@PathVariable Long id) {
+        return service.exists(id);
+    }
+
+    @GetMapping(value = "/getPrice/{id}")
+    public ResponseEntity<BigDecimal> getPrice(@PathVariable Long id) {
+        return service.getPrice(id);
     }
 }

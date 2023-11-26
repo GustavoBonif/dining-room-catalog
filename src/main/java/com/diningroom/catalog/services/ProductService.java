@@ -9,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,9 +37,9 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO findById(Long id) {
+    public ResponseEntity<ProductDTO> findById(Long id) {
         Product entity = productRepository.findById(id).get();
-        return new ProductDTO(entity);
+        return new ResponseEntity<>(new ProductDTO(entity), HttpStatus.OK);
     }
 
     @Transactional
@@ -91,7 +94,7 @@ public class ProductService {
 
     @Transactional
     public void delete(Long id) {
-        ProductDTO productDTO = this.findById(id);
+        ProductDTO productDTO = this.findById(id).getBody();
         productRepository.deleteById(productDTO.getId());
     }
 
@@ -112,8 +115,27 @@ public class ProductService {
     }
 
     @Transactional
-    public boolean existsById(Long id) {
-        return productRepository.existsById(id);
+    public ResponseEntity<Boolean> exists(Long id) {
+        Boolean productExists = productRepository.existsById(id);
+
+        if (productExists) {
+            return new ResponseEntity<>(productExists, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(productExists, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<BigDecimal> getPrice(Long id) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+
+        if (!optionalProduct.isPresent()) {
+            throw new IllegalArgumentException("O produto com id " + id + " não existe");
+        }
+
+        Product product = optionalProduct.get();
+
+        return new ResponseEntity<>(product.getPrice(), HttpStatus.OK);
     }
 
     private void checkEmptyRequiredFields(ProductDTO productDTO) {
